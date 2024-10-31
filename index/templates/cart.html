@@ -13,8 +13,16 @@
 <h2>{{ item.user_product_quantity }}</h2>
 <br>
 {% widthratio item.user_product.product_price 1 item.user_product_quantity %}
+<form action="/del-from-cart/{{ item.user_product.id }}">
+    {% csrf_token %}
+    <button type="submit">Удалить</button>
+</form>
 {% endfor %}
 <hr>
 <h1>${{ summary }}</h1>
+<form method="post">
+    {% csrf_token %}
+    <button type="submit">Оформить заказ</button>
+</form>
 </body>
 </html>

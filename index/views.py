@@ -108,7 +108,6 @@ def cart_page(request):
     user_pr_amounts = [a.user_product_quantity for a in user_cart]
     product_counts = [c.user_product.product_count for c in user_cart]
     totals = [round(t.user_product_quantity * t.user_product.product_price, 2) for t in user_cart]
-    totals = [round(t.user_product_quantity * t.user_product.product_price, 2) for t in user_cart]
     text = (f'Новый заказ!\n'
             f'Клиент: {User.objects.get(id=request.user.id).email}\n\n')
 
@@ -119,8 +118,8 @@ def cart_page(request):
             product.save(update_fields=['product_count'])
 
         for i in user_cart:
-            text += (f'Товар: {i[1]}\n'
-                     f'Количество: {i[2]}\n')
+            text += (f'Товар: {i.user_product}\n'
+                     f'Количество: {i.user_product_quantity}\n')
 
         text += f'\nИтог: {round(sum(totals))}'
         bot.send_message(6775701667, text)
