@@ -4,6 +4,9 @@ from .forms import SearchForm, RegForm
 from django.views import View
 from django.contrib.auth.models import User
 from django.contrib.auth import login, logout
+import telebot
+
+bot = telebot.TeleBot('7606530458:AAEg7uCOGM7vQ-ebK-0i3XlNSD2gy3R5hBI')
 
 
 # Create your views here.
@@ -97,3 +100,35 @@ def del_from_cart(request, pk):
     Cart.objects.filter(user_product=product_to_del, user_id=request.user.id).delete()
 
     return redirect('/cart')
+
+
+def cart_page(request):
+    user_cart = Cart.objects.filter(user_id=request.user.id)
+    product_ids = [i.user_product.id for i in user_cart]
+    user_pr_amounts = [a.user_product_quantity for a in user_cart]
+    product_counts = [c.user_product.product_count for c in user_cart]
+    totals = [round(t.user_product_quantity * t.user_product.product_price, 2) for t in user_cart]
+    totals = [round(t.user_product_quantity * t.user_product.product_price, 2) for t in user_cart]
+    text = (f'Новый заказ!\n'
+            f'Клиент: {User.objects.get(id=request.user.id).email}\n\n')
+
+    if request.method == 'POST':
+        for i in range(len(product_ids)):
+            product = Product.objects.get(id=product_ids[i])
+            product.product_count = product_counts[i] - user_pr_amounts[i]
+            product.save(update_fields=['product_count'])
+
+        for i in user_cart:
+            text += (f'Товар: {i[1]}\n'
+                     f'Количество: {i[2]}\n')
+
+        text += f'\nИтог: {round(sum(totals))}'
+        bot.send_message(6775701667, text)
+        user_cart.delete()
+        return redirect('/')
+
+    context = {'cart': user_cart, 'totals': totals, 'summary': round(sum(totals), 2), 'total': 0}
+    return render(request, 'cart.html', context)
+
+
+

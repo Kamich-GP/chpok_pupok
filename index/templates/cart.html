@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Корзина</title>
+</head>
+<body>
+<h1>Корзина</h1>
+<hr>
+{% for item in cart %}
+<h2>{{ item.user_product }}</h2>
+<br>
+<h2>{{ item.user_product_quantity }}</h2>
+<br>
+{% widthratio item.user_product.product_price 1 item.user_product_quantity %}
+{% endfor %}
+<hr>
+<h1>${{ summary }}</h1>
+</body>
+</html>

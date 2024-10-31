@@ -31,8 +31,23 @@
         </li>
     </ul>
     <br>
-    <button class="btn btn-warning text-white">В корзину</button>
-    <button class="btn btn-secondary text-white">${{product.product_price}}</button>
+    {% if user.is_authenticated %}
+    <form action="/to-cart/{{ product.id }}" method="post">
+        {% csrf_token %}
+        <input type="number" min="1" placeholder="Количество товара" name="pr_amount">
+        <button class="btn btn-warning text-white" type="submit">В корзину</button>
+        <button class="btn btn-secondary text-white">${{product.product_price}}</button>
+    </form>
+    {% else %}
+    <p>Войдите или зарегистрируйтесь для приобретения товара!</p>
+    <br>
+    <ul class="nav nav-pills">
+        <li class="nav-item"><a href="/accounts/login" class="nav-link active" aria-current="page">Войти</a>
+        </li>
+        <li class="nav-item"><a href="/register" class="nav-link active" aria-current="page">Зарегистрироваться</a>
+        </li>
+    </ul>
+    {% endif %}
 </div>
 </body>
 </html>
